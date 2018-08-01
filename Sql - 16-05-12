@@ -1,0 +1,248 @@
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL';
+
+CREATE SCHEMA IF NOT EXISTS `curupira` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci ;
+USE `curupira` ;
+
+-- -----------------------------------------------------
+-- Table `curupira`.`Raca`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `curupira`.`Raca` ;
+
+CREATE  TABLE IF NOT EXISTS `curupira`.`Raca` (
+  `idRaca` INT NOT NULL AUTO_INCREMENT ,
+  `Descricao` VARCHAR(45) NULL ,
+  `Animal` CHAR NULL ,
+  PRIMARY KEY (`idRaca`) )
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `curupira`.`Categoria`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `curupira`.`Categoria` ;
+
+CREATE  TABLE IF NOT EXISTS `curupira`.`Categoria` (
+  `idCategoria` INT NOT NULL AUTO_INCREMENT ,
+  `Descricao` VARCHAR(45) NULL ,
+  `Animal` CHAR NULL ,
+  PRIMARY KEY (`idCategoria`) )
+ENGINE = InnoDB, 
+COMMENT = 'Especifica o tipo de manejo do animal' ;
+
+
+-- -----------------------------------------------------
+-- Table `curupira`.`Animal`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `curupira`.`Animal` ;
+
+CREATE  TABLE IF NOT EXISTS `curupira`.`Animal` (
+  `idAnimal` INT NOT NULL AUTO_INCREMENT ,
+  `Identificacao` VARCHAR(20) NOT NULL ,
+  `IMC` DOUBLE NULL ,
+  `Peso` DOUBLE NULL ,
+  `Data_Nascimento` VARCHAR(10) NULL ,
+  `Sexo` CHAR(1) NULL ,
+  `Raca` INT NULL ,
+  `Categoria` INT NULL ,
+  `Status` CHAR(1) NULL ,
+  `Observacao` TEXT NULL ,
+  PRIMARY KEY (`idAnimal`) ,
+  INDEX `fk_Animal_Raca` (`Raca` ASC) ,
+  INDEX `fk_Animal_Categoria1` (`Categoria` ASC) ,
+  CONSTRAINT `fk_Animal_Raca`
+    FOREIGN KEY (`Raca` )
+    REFERENCES `curupira`.`Raca` (`idRaca` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Animal_Categoria1`
+    FOREIGN KEY (`Categoria` )
+    REFERENCES `curupira`.`Categoria` (`idCategoria` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+COMMENT = 'Status\nV - vivo\nM - morto\nD - descartado (vendido porque o a' /* comment truncated */ ;
+
+
+-- -----------------------------------------------------
+-- Table `curupira`.`Vacina`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `curupira`.`Vacina` ;
+
+CREATE  TABLE IF NOT EXISTS `curupira`.`Vacina` (
+  `idVacina` INT NOT NULL AUTO_INCREMENT ,
+  `Descricao` VARCHAR(45) NULL ,
+  `Periodo` VARCHAR(45) NULL ,
+  PRIMARY KEY (`idVacina`) )
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `curupira`.`Producao`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `curupira`.`Producao` ;
+
+CREATE  TABLE IF NOT EXISTS `curupira`.`Producao` (
+  `idProducao` INT NOT NULL AUTO_INCREMENT ,
+  `Tipo` VARCHAR(45) NULL ,
+  PRIMARY KEY (`idProducao`) )
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `curupira`.`Historico_Producao`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `curupira`.`Historico_Producao` ;
+
+CREATE  TABLE IF NOT EXISTS `curupira`.`Historico_Producao` (
+  `idAnimal` INT NOT NULL ,
+  `idProducao` INT NOT NULL ,
+  `Data` VARCHAR(10) NULL ,
+  `Quantidade` VARCHAR(45) NULL ,
+  `Observacao` TEXT NULL ,
+  PRIMARY KEY (`idAnimal`, `idProducao`) ,
+  INDEX `fk_Animal_has_Producao_Animal1` (`idAnimal` ASC) ,
+  INDEX `fk_Animal_has_Producao_Producao1` (`idProducao` ASC) ,
+  CONSTRAINT `fk_Animal_has_Producao_Animal1`
+    FOREIGN KEY (`idAnimal` )
+    REFERENCES `curupira`.`Animal` (`idAnimal` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Animal_has_Producao_Producao1`
+    FOREIGN KEY (`idProducao` )
+    REFERENCES `curupira`.`Producao` (`idProducao` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `curupira`.`Zootecnica`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `curupira`.`Zootecnica` ;
+
+CREATE  TABLE IF NOT EXISTS `curupira`.`Zootecnica` (
+  `idZootecnica` INT NOT NULL AUTO_INCREMENT ,
+  `Pratica` VARCHAR(45) NULL ,
+  PRIMARY KEY (`idZootecnica`) )
+ENGINE = InnoDB, 
+COMMENT = 'Contém as práticas zootecnicas que podem ser executadas nos ' /* comment truncated */ ;
+
+
+-- -----------------------------------------------------
+-- Table `curupira`.`Historico_Zootecnica`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `curupira`.`Historico_Zootecnica` ;
+
+CREATE  TABLE IF NOT EXISTS `curupira`.`Historico_Zootecnica` (
+  `Animal_idAnimal` BIGINT NOT NULL ,
+  `Zootecnica_idZootecnica` INT NOT NULL ,
+  `Data` VARCHAR(10) NULL ,
+  `Observacao` TEXT NULL ,
+  PRIMARY KEY (`Animal_idAnimal`, `Zootecnica_idZootecnica`) ,
+  INDEX `fk_Animal_has_Zootecnica_Animal1` (`Animal_idAnimal` ASC) ,
+  INDEX `fk_Animal_has_Zootecnica_Zootecnica1` (`Zootecnica_idZootecnica` ASC) ,
+  CONSTRAINT `fk_Animal_has_Zootecnica_Animal1`
+    FOREIGN KEY (`Animal_idAnimal` )
+    REFERENCES `curupira`.`Animal` (`idAnimal` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Animal_has_Zootecnica_Zootecnica1`
+    FOREIGN KEY (`Zootecnica_idZootecnica` )
+    REFERENCES `curupira`.`Zootecnica` (`idZootecnica` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `curupira`.`Reproducao`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `curupira`.`Reproducao` ;
+
+CREATE  TABLE IF NOT EXISTS `curupira`.`Reproducao` (
+  `idReproducao` INT NOT NULL AUTO_INCREMENT ,
+  `Retorno_Cio` VARCHAR(10) NULL ,
+  `Prenha` CHAR NULL ,
+  PRIMARY KEY (`idReproducao`) )
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `curupira`.`Historico_Reproducao`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `curupira`.`Historico_Reproducao` ;
+
+CREATE  TABLE IF NOT EXISTS `curupira`.`Historico_Reproducao` (
+  `Animal_idAnimal` INT NOT NULL ,
+  `Reproducao_idReproducao` INT NOT NULL ,
+  `Cria` INT NULL ,
+  `Data_Desmame` VARCHAR(10) NULL ,
+  `Data_Aborto` VARCHAR(10) NULL ,
+  `Cura_Umbigo` CHAR(1) NULL ,
+  `Colastro` CHAR(1) NULL ,
+  `Marcacao` CHAR(1) NULL ,
+  PRIMARY KEY (`Animal_idAnimal`, `Reproducao_idReproducao`) ,
+  INDEX `fk_Animal_has_Reproducao_Animal1` (`Animal_idAnimal` ASC) ,
+  INDEX `fk_Animal_has_Reproducao_Reproducao1` (`Reproducao_idReproducao` ASC) ,
+  CONSTRAINT `fk_Animal_has_Reproducao_Animal1`
+    FOREIGN KEY (`Animal_idAnimal` )
+    REFERENCES `curupira`.`Animal` (`idAnimal` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Animal_has_Reproducao_Reproducao1`
+    FOREIGN KEY (`Reproducao_idReproducao` )
+    REFERENCES `curupira`.`Reproducao` (`idReproducao` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB, 
+COMMENT = 'Status - indica o andamento da Preenhes da vaca\nA - abortou\n' /* comment truncated */ ;
+
+
+-- -----------------------------------------------------
+-- Table `curupira`.`IndicesZootecnicos`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `curupira`.`IndicesZootecnicos` ;
+
+CREATE  TABLE IF NOT EXISTS `curupira`.`IndicesZootecnicos` (
+  `idIndicesZootecnicos` INT NOT NULL ,
+  `Descricao` VARCHAR(500) NULL ,
+  `Normal` VARCHAR(10) NULL ,
+  `Maximo` VARCHAR(10) NULL ,
+  `Minimo` VARCHAR(10) NULL ,
+  `Observacao` TEXT NULL ,
+  PRIMARY KEY (`idIndicesZootecnicos`) )
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `curupira`.`Historico_Vacina`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `curupira`.`Historico_Vacina` ;
+
+CREATE  TABLE IF NOT EXISTS `curupira`.`Historico_Vacina` (
+  `Vacina_idVacina` INT NOT NULL ,
+  `Animal_idAnimal` BIGINT NOT NULL ,
+  `Data` VARCHAR(10) NULL ,
+  `Observacao` TEXT NULL ,
+  PRIMARY KEY (`Vacina_idVacina`, `Animal_idAnimal`) ,
+  INDEX `fk_Vacina_has_Animal_Animal1` (`Animal_idAnimal` ASC) ,
+  INDEX `fk_Vacina_has_Animal_Vacina1` (`Vacina_idVacina` ASC) ,
+  CONSTRAINT `fk_Vacina_has_Animal_Vacina1`
+    FOREIGN KEY (`Vacina_idVacina` )
+    REFERENCES `curupira`.`Vacina` (`idVacina` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Vacina_has_Animal_Animal1`
+    FOREIGN KEY (`Animal_idAnimal` )
+    REFERENCES `curupira`.`Animal` (`idAnimal` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;

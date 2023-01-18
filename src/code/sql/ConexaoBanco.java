@@ -15,7 +15,7 @@ public class ConexaoBanco {
 	public ConexaoBanco(){
 		try{
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/curupira", "root", "werewolf");
+			con = DriverManager.getConnection("jdbc:mysql://localhost:13306/curupira", "root", "123456");
 		}catch(Exception e){
 			//System.out.println("Nao foi possivel conectar");
 			//JOptionPane.showMessageDialog(null, "Nao foi possivel conectar");
